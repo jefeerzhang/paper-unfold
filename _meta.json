@@ -1,0 +1,12 @@
+{
+  "name": "paper-unfold",
+  "description": "把任意 PDF 论文像折纸一样一层一层展开（直觉层→概念层→技术层→批判层），按读者背景自适应密度。【触发场景】上传 PDF 文件、提供论文链接、请求解读文献、需要文献渐进式导读。【触发关键词】paper unfold、帮我读懂这篇、解读 PDF、生成导读、literature guide、explain this paper、一键导读、自动导读。【核心能力】内置 PDF 提取、分级导读（科研小白/进阶人员/资深学者）、4 层递进讲解、LaTeX 公式渲染、知识族谱图、后续发展检索（SciVerse 优先）、相关文献推荐。【前置依赖】poppler 或 pymupdf（可选）；SciVerse MCP（用于学术检索，需要 SCIVERSE_API_TOKEN；无 Token 时主动引导用户配置，不静默降级）。",
+  "compatibility": "需要 poppler (pdftotext) 或 Python pymupdf 进行 PDF 提取；需要 SciVerse MCP（mcp__sciverse__*）+ SCIVERSE_API_TOKEN 进行学术检索；WebSearch/WebFetch 作 fallback（需用户显式同意）；需要 write 工具保存输出；支持 Windows/macOS/Linux 全平台",
+  "install_cmd": "npx skills add <owner>/paper-unfold",
+  "install_cmd_windows": "npx skills add <owner>/paper-unfold",
+  "license": "MIT",
+  "version": "2.3.0",
+  "author": "@user",
+  "created": "2026-03-27",
+  "updated": "2026-08-02"
+}

@@ -1,0 +1,101 @@
+{
+  "test_prompts": [
+    {
+      "prompt": "帮我展开这篇论文：https://arxiv.org/pdf/2509.22186",
+      "expect": [
+        "SKILL.md frontmatter 被识别",
+        "pdftotext 或 pymupdf 被调用",
+        "输出包含四层（直觉/概念/技术/批判）",
+        "输出包含知识族谱图",
+        "输出保存到 ./文献导读/ 目录"
+      ]
+    },
+    {
+      "prompt": "我是科研小白，帮我读这篇 PDF：./papers/attention.pdf",
+      "expect": [
+        "术语密度 ≤5 术语/千字",
+        "Layer 1-2 篇幅占 50-60%",
+        "每个术语有白话解释"
+      ]
+    },
+    {
+      "prompt": "用资深学者视角分析这篇论文，并告诉我后续有什么批评或复现",
+      "expect": [
+        "Layer 1-2 篇幅压缩到 10-20%",
+        "Layer 4 批判层占主要篇幅",
+        "后续发展检索包含 ≥3 个权威来源链接",
+        "明确区分开创性贡献 vs 渐进式改进"
+      ]
+    },
+    {
+      "prompt": "这篇 PDF 是扫描件，提取不了文字",
+      "expect": [
+        "提示用户 OCR 或手动粘贴文本",
+        "提供替代方案（如使用在线 OCR 工具）",
+        "不强行生成导读"
+      ]
+    },
+    {
+      "prompt": "用两句话总结这篇论文",
+      "expect": [
+        "明确告知这不是本 Skill 的目标",
+        "建议用普通对话或工具做短摘要",
+        "不强行生成四层结构"
+      ]
+    },
+    {
+      "prompt": "综合这三篇 PDF：a.pdf, b.pdf, c.pdf 写个综述",
+      "expect": [
+        "明确告知这不是本 Skill 的目标",
+        "建议用文献综述类工具",
+        "不默认生成综合综述"
+      ]
+    },
+    {
+      "prompt": "我手头只有标题：Attention Is All You Need，没 PDF",
+      "expect": [
+        "先尝试 WebFetch 找开放获取版本（arXiv）",
+        "找不到则提示用户上传 PDF 或粘贴文本",
+        "不根据标题凭空生成内容"
+      ]
+    },
+    {
+      "prompt": "帮我展开这篇论文并推荐 3-5 篇相关的：https://arxiv.org/pdf/1706.03762",
+      "expect": [
+        "完整四层 + 知识族谱图 + 自测清单",
+        "📚 推荐阅读节存在，含 3-5 篇文献",
+        "每篇推荐带 doc_id + URL + 一句话理由",
+        "推荐必须经 SciVerse semantic_search/search_papers 检索",
+        "SciVerse 失败时 fallback 到 WebSearch 并标注"
+      ]
+    },
+    {
+      "prompt": "展开这篇：https://arxiv.org/pdf/1706.03762，并告诉我它的复现/批评",
+      "expect": [
+        "Layer 4 批判层后跟后续检索报告",
+        "至少 3 个权威来源（SciVerse 优先：list_paper_relations CITATIONS + semantic_search）",
+        "无果时写'未检索到可核验的后续反转'"
+      ]
+    },
+    {
+      "prompt": "首次使用 paper-unfold，SCIVERSE_API_TOKEN 未配置，帮我展开 https://arxiv.org/pdf/1706.03762",
+      "expect": [
+        "Agent 主动 echo $SCIVERSE_API_TOKEN 检测 token 状态",
+        "检测到 token 缺失时按'⚙️ SciVerse 配置引导'节告知用户",
+        "提供完整 step-by-step 配置指南（获取 token + 写 .mcp.json）",
+        "等用户决策（配置/显式 fallback/跳过学术检索）",
+        "禁止静默降级到 WebSearch 继续生成推荐阅读"
+      ]
+    },
+    {
+      "prompt": "我看过 SciVerse 鉴权失败的提示了，先继续，token 之后再说",
+      "expect": [
+        "Agent 确认用户显式同意 fallback",
+        "在报告顶部加'⚠️ SciVerse 不可用'横幅",
+        "Layer 4 后续检索和推荐阅读用 WebSearch 限定学术站点",
+        "推荐阅读每条带 [fallback] 前缀标注来源降级",
+        "质量保证说明：doc_id 不可追溯"
+      ]
+    }
+  ]
+}

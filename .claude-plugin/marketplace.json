@@ -1,0 +1,16 @@
+{
+  "name": "paper-unfold",
+  "version": "2.3.0",
+  "description": "把任意 PDF 论文像折纸一样一层一层展开（直觉层→概念层→技术层→批判层），含知识族谱图、相关推荐、后续检索；SciVerse Token 缺失时主动引导用户配置",
+  "author": {
+    "name": "jefeer"
+  },
+  "license": "MIT",
+  "skills": [
+    {
+      "name": "paper-unfold",
+      "path": "SKILL.md",
+      "description": "四层渐进式文献导读，PDF/URL 输入，按读者背景自适应密度，含推荐阅读和后续检索（SciVerse 优先）；首次使用主动引导配置 SCIVERSE_API_TOKEN"
+    }
+  ]
+}

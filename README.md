@@ -29,8 +29,9 @@
 
 ## 效果示例
 
-- 导读：[examples/example-output.md](examples/example-output.md)（四层结构节选）
-- 空白：[examples/example-gap-output.md](examples/example-gap-output.md)（Miles 七分法扫描 + 空白地图，节选自《耐心资本与企业颠覆性创新》）
+- 导读：[examples/example-output.md](examples/example-output.md)（四层结构节选，Attention Is All You Need）
+- 空白：[examples/example-gap-output.md](examples/example-gap-output.md)（Miles 七分法，节选自《耐心资本与企业颠覆性创新》）
+- 导读 + 空白（含 SciVerse 实跑记录）：[examples/example-output-wangjiaxin.md](examples/example-output-wangjiaxin.md) · [examples/example-gap-output-wangjiaxin.md](examples/example-gap-output-wangjiaxin.md)（《“人工智能+”如何赋能券商高质量发展？》）
 
 ```text
 输入：一篇 PDF 或 arXiv 链接
@@ -194,8 +195,10 @@ paper-unfold/
 ├── CHANGELOG.md             # 变更记录
 ├── 研究空白.md              # 空白识别知识底座（G3 前必读）
 ├── examples/
-│   ├── example-output.md        # 导读报告样例
-│   └── example-gap-output.md    # 空白分析报告样例
+│   ├── example-output.md                 # 导读样例
+│   ├── example-gap-output.md             # 空白样例（耐心资本）
+│   ├── example-output-wangjiaxin.md      # 导读样例（券商 AI × IPO 抑价）
+│   └── example-gap-output-wangjiaxin.md  # 空白样例（同上，含 SciVerse 记录）
 ├── scripts/
 │   └── validate_skill.py        # 工程自检脚本（版本/占位符/铁律）
 ├── tests/

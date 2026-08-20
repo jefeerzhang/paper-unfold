@@ -29,7 +29,8 @@
 
 ## 效果示例
 
-👉 [examples/example-output.md](examples/example-output.md)：四层导读报告结构框架与关键内容（节选自真实论文导读）。
+- 导读：[examples/example-output.md](examples/example-output.md)（四层结构节选）
+- 空白：[examples/example-gap-output.md](examples/example-gap-output.md)（Miles 七分法扫描 + 空白地图，节选自《耐心资本与企业颠覆性创新》）
 
 ```text
 输入：一篇 PDF 或 arXiv 链接
@@ -186,20 +187,22 @@ npx skills add jefeerzhang/paper-unfold
 
 ```text
 paper-unfold/
-├── SKILL.md              # 技能定义与四层工作流
-├── README.md             # 安装与使用说明
-├── LICENSE               # MIT
-├── _meta.json            # 元信息（兼容旧版）
-├── CHANGELOG.md          # 变更记录
+├── SKILL.md                 # 技能定义（导读 + 识别研究空白）
+├── README.md                # 安装与使用说明
+├── LICENSE                  # MIT
+├── _meta.json               # 元信息（兼容旧版）
+├── CHANGELOG.md             # 变更记录
+├── 研究空白.md              # 空白识别知识底座（G3 前必读）
 ├── examples/
-│   └── example-output.md    # 真实导读报告样例
+│   ├── example-output.md        # 导读报告样例
+│   └── example-gap-output.md    # 空白分析报告样例
 ├── scripts/
-│   └── validate_skill.py    # 工程自检脚本（版本/占位符/铁律）
+│   └── validate_skill.py        # 工程自检脚本（版本/占位符/铁律）
 ├── tests/
-│   └── test-prompts.json    # 测试 prompt 与期望输出
+│   └── test-prompts.json        # 测试 prompt 与期望输出
 └── .github/
     └── workflows/
-        └── skill-check.yml  # CI：push/PR 自动跑自检
+        └── skill-check.yml      # CI：push/PR 自动跑自检
 ```
 
 ---
@@ -215,13 +218,19 @@ python scripts/validate_skill.py
 # 验证它能否复述四层结构、输出路径和失败处理策略。
 ```
 
-一条验收 prompt：
+验收 prompt：
 
 ```text
 不实际提取 PDF，只根据 SKILL.md 说明：如果用户给一个扫描版 PDF，你会怎么处理？输出报告保存在哪里？
 ```
 
 合格表现：回答提示用户 OCR 或手动粘贴文本，输出到 `./文献导读/`。
+
+```text
+不实际检索，只根据 SKILL.md：用户说「识别这篇论文的研究空白」时，报告顶部必须有什么？七项里能否只写存在的几项？知识底座是哪个文件？
+```
+
+合格表现：顶部必须有单篇论文局限性声明；七项全部扫描、不允许跳过；先读 `研究空白.md`；保存到 `./研究空白/`。
 
 ---
 

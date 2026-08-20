@@ -1,12 +1,12 @@
 {
   "name": "paper-unfold",
-  "description": "把任意 PDF 论文像折纸一样一层一层展开（直觉层→概念层→技术层→批判层），按读者背景自适应密度。支持「识别研究空白」专项模式：基于 Miles 七分法逐项分析 + SciVerse 交叉验证，输出结构化空白报告。【触发场景】上传 PDF 文件、提供论文链接、请求解读文献、需要文献渐进式导读、识别研究空白、分析 research gap。【触发关键词】paper unfold、帮我读懂这篇、解读 PDF、生成导读、literature guide、explain this paper、一键导读、自动导读、识别研究空白、分析 gap、找研究空白、research gap、identify gap。【核心能力】内置 PDF 提取、分级导读（科研小白/进阶人员/资深学者）、4 层递进讲解、LaTeX 公式渲染、知识族谱图、后续发展检索（SciVerse 优先）、相关文献推荐、研究空白识别（Miles 七分法 + Robinson AHRQ 框架 + SciVerse 交叉验证）。【前置依赖】poppler 或 pymupdf（可选）；SciVerse MCP（用于学术检索，需要 SCIVERSE_API_TOKEN；无 Token 时主动引导用户配置，不静默降级）。",
+  "description": "把任意 PDF 论文像折纸一样一层一层展开，输出一份统一报告：直觉层→概念层→技术层→批判层 + 知识族谱图 + Miles 七分法研究空白。按读者背景自适应密度。【触发场景】上传 PDF、论文链接、解读文献、渐进式导读、识别研究空白、分析 research gap。【触发关键词】paper unfold、帮我读懂这篇、解读 PDF、生成导读、literature guide、explain this paper、一键导读、自动导读、识别研究空白、分析 gap、找研究空白、research gap、identify gap。【核心能力】内置 PDF 提取、分级导读、4 层递进、LaTeX、知识族谱图、后续检索（SciVerse 优先）、相关推荐、研究空白（Miles 七分法 + Robinson AHRQ + SciVerse 交叉验证）；导读与空白同文件保存。【前置依赖】poppler 或 pymupdf（可选）；SciVerse MCP（SCIVERSE_API_TOKEN；无 Token 时主动引导，不静默降级）。",
   "compatibility": "可选 poppler (pdftotext) 或 Python pymupdf 进行 PDF 提取（都不装时可手动粘贴文本）；需要 SciVerse MCP（mcp__sciverse__*）+ SCIVERSE_API_TOKEN 进行学术检索；WebSearch/WebFetch 作 fallback（需用户显式同意）；需要 write 工具保存输出；支持 Windows/macOS/Linux 全平台",
   "install_cmd": "npx skills add jefeerzhang/paper-unfold",
   "install_cmd_windows": "npx skills add jefeerzhang/paper-unfold",
   "license": "MIT",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "author": "jefeer",
   "created": "2026-03-27",
-  "updated": "2026-08-20"
+  "updated": "2026-08-21"
 }

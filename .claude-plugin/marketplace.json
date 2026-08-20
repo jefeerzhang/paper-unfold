@@ -1,7 +1,7 @@
 {
   "name": "paper-unfold",
-  "version": "2.4.0",
-  "description": "把任意 PDF 论文像折纸一样一层一层展开（直觉层→概念层→技术层→批判层），含知识族谱图、相关推荐、后续检索；支持「识别研究空白」专项模式（Miles 七分法 + SciVerse 交叉验证）；SciVerse Token 缺失时主动引导用户配置",
+  "version": "2.5.0",
+  "description": "把任意 PDF 论文像折纸一样一层一层展开，输出一份统一报告（四层导读 + 知识族谱图 + Miles 七分法研究空白）；SciVerse 交叉验证；Token 缺失时主动引导配置",
   "author": {
     "name": "jefeer"
   },
@@ -10,7 +10,7 @@
     {
       "name": "paper-unfold",
       "path": "SKILL.md",
-      "description": "四层渐进式文献导读 + 研究空白识别，PDF/URL 输入，按读者背景自适应密度，含推荐阅读和后续检索（SciVerse 优先）；首次使用主动引导配置 SCIVERSE_API_TOKEN"
+      "description": "一份文献展开：四层导读 + 知识族谱图 + 研究空白；PDF/URL 输入，SciVerse 优先；首次使用主动引导配置 SCIVERSE_API_TOKEN"
     }
   ]
 }

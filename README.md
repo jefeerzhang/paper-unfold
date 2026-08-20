@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![skills.sh](https://skills.sh/b/jefeerzhang/paper-unfold)](https://skills.sh/jefeerzhang/paper-unfold)
 
-**输入 PDF 或链接，展开四层导读；再说「识别研究空白」，得到 Miles 七分法扫描与交叉验证报告。**
+**输入 PDF 或链接，得到一份统一报告：四层导读 + 知识族谱图 + Miles 七分法空白分析。**
 
 [看效果](#效果示例) · [安装](#快速开始) · [触发方式](#触发方式) · [安全边界](#安全边界)
 
@@ -29,22 +29,19 @@
 
 ## 效果示例
 
-| 模式 | 样例 | 说明 |
-|------|------|------|
-| 导读 | [example-output.md](examples/example-output.md) | 四层结构节选（Attention Is All You Need） |
-| 空白 | [example-gap-output.md](examples/example-gap-output.md) | Miles 七分法 + 空白地图（《耐心资本与企业颠覆性创新》） |
-| 导读 + 空白 | [example-output-wangjiaxin.md](examples/example-output-wangjiaxin.md) · [example-gap-output-wangjiaxin.md](examples/example-gap-output-wangjiaxin.md) | 同一篇《管理世界》论文；含 SciVerse 实跑记录（工具、`doc_id`、未入库与接口限制均如实标注） |
+默认**一份** Markdown：前半四层导读 + 知识族谱图，后半研究空白。不拆成两个文件。
+
+| 样例 | 说明 |
+|------|------|
+| [example-output.md](examples/example-output.md) | 统一报告节选（Attention Is All You Need：四层 + 族谱图 + 空白结构位） |
+| [example-gap-output.md](examples/example-gap-output.md) | 同一产物的空白半部格式（《耐心资本与企业颠覆性创新》） |
+| [example-output-wangjiaxin.md](examples/example-output-wangjiaxin.md) | 完整统一样例（《管理世界》券商 AI × IPO 抑价；含 SciVerse 实跑：`doc_id`、未入库、接口限制均如实标注） |
 
 ```text
-输入：一篇 PDF 或 arXiv 链接
-输出：Markdown 报告，含四层理解、知识族谱图、自测清单
-保存：./文献导读/<论文简称>_文献导读.md
-```
-
-```text
-输入：一篇 PDF + 说「识别研究空白」
-输出：Markdown 报告，含七项空白扫描、空白地图、高价值方向建议
-保存：./研究空白/<论文简称>_研究空白分析.md
+输入：一篇 PDF 或 arXiv 链接（说「展开」或「识别研究空白」均可）
+输出：一份 Markdown = 四层导读 + 知识族谱图 + 七项空白扫描 + 空白地图
+保存：./文献导读/<论文简称>_文献展开.md
+禁止：再写 ./研究空白/ 或第二份报告
 ```
 
 ---
@@ -100,7 +97,7 @@ export SCIVERSE_API_TOKEN=你的token
 npx skills add jefeerzhang/paper-unfold
 ```
 
-装完对 Agent 说（二选一）：
+装完对 Agent 说（两种说法产出**同一份**报告，只是篇幅侧重不同）：
 
 ```text
 帮我展开这篇论文：https://arxiv.org/pdf/2509.22186
@@ -114,7 +111,7 @@ npx skills add jefeerzhang/paper-unfold
 
 ## 触发方式
 
-### 文献导读
+以下说法都生成**同一份** `_文献展开.md`（含族谱图与空白后半）：
 
 - 帮我展开/解读这篇 PDF：`<path>`
 - 解读这个链接的论文：`<url>`
@@ -123,40 +120,28 @@ npx skills add jefeerzhang/paper-unfold
 - 生成这篇论文的知识族谱图
 - 这篇论文之后有什么批评或复现？
 - 推荐和这篇相关的 3-5 篇文献
-- 首次使用 paper-unfold，帮我展开这篇论文（触发 SciVerse Token 检测与配置引导）
-
-### 识别研究空白
-
 - 帮我识别这篇论文的研究空白：`<path>`
 - 分析这篇论文的 research gap：`<url>`
-- 基于这篇论文，找研究空白
-- 这篇论文有哪些 gap 还没被填补？
+- 基于刚才的导读，把研究空白补进同一份报告
+- 首次使用 paper-unfold，帮我展开这篇论文（触发 SciVerse Token 检测与配置引导）
 
 ---
 
 ## 它会交付什么？
 
-### 文献导读模式
+**一份文件**，目录如下：
 
-| 产物 | 说明 |
+| 章节 | 说明 |
 |------|------|
-| 四层导读报告 | 直觉层 → 概念层 → 技术层 → 批判层 |
-| 知识族谱图 | 前因 → 本研究 → 后果，标注开创性/渐进式贡献 |
-| 后续检索报告 | SciVerse 验证后续批评、复现、反转（无 token 须显式同意 fallback） |
-| 推荐阅读 | 3–5 篇相关文献（优先 SciVerse `doc_id` / `unique_id`） |
-| 自测清单 | 基础/进阶/深度三级问题 |
-| 自动保存 | `./文献导读/<论文简称>_文献导读.md` |
-
-### 识别研究空白模式
-
-| 产物 | 说明 |
-|------|------|
-| 文献概览 | 核心问题、方法、样本、主要发现 |
-| 七项空白扫描 | Miles 七分法逐项分析，含存在性判断 + 证据 + 置信度 |
-| 空白地图 | 汇总表格，一眼看清哪些空白存在、哪些已被填补 |
-| 交叉验证 | SciVerse：`semantic_search` + `search_papers` + `list_paper_relations`；未命中如实写「需进一步确认」 |
-| 高价值建议 | 1-3 个最值得跟进的空白方向 + 推荐阅读 |
-| 自动保存 | `./研究空白/<论文简称>_研究空白分析.md` |
+| 四层导读 | 直觉层 → 概念层 → 技术层 → 批判层 |
+| 知识族谱图 | 前因 → 本研究 → 后果；「未填」节点对接后半空白 |
+| 后续检索 | SciVerse 验证批评/复现（无 token 须显式同意 fallback） |
+| 推荐阅读 | 3–5 篇（优先 SciVerse `doc_id` / `unique_id`） |
+| 自测清单 | 基础/进阶/深度 |
+| 七项空白扫描 | Miles 七分法；存在性 + 证据 + 置信度；节前 ⚠️ 单篇局限声明 |
+| 空白地图 | 7 行表 + SciVerse 交叉验证记录 |
+| 高价值建议 | 1–3 个方向 |
+| 自动保存 | **仅** `./文献导读/<论文简称>_文献展开.md` |
 
 ---
 
@@ -208,6 +193,7 @@ SciVerse 是学术检索后端，不是 PDF 阅读器。Agent 用它给**可追�
 - **不是**自动引用生成器（推荐/批评必须 SciVerse 检索验证）。
 - **不是**开题报告代写工具（研究空白分析只做建议，不替用户撰写选题论证）。
 - **不是**万能空白探测器（分析基于单篇论文 + 有限检索，用户需结合领域知识做最终判断）。
+- **不是**两份报告生成器。族谱图与空白分析必须写在同一文件，拒绝「导读一份、空白一份」。
 - **不是**静默降级的工具。SciVerse Token 缺失会主动告知，不会偷偷用 WebSearch 替代而不告诉你。
 
 ---
@@ -216,17 +202,17 @@ SciVerse 是学术检索后端，不是 PDF 阅读器。Agent 用它给**可追�
 
 ```text
 paper-unfold/
-├── SKILL.md                 # 技能定义（导读 + 识别研究空白）
+├── SKILL.md                 # 技能定义（一份文献展开 = 导读 + 族谱图 + 空白）
 ├── README.md                # 安装与使用说明
 ├── LICENSE                  # MIT
 ├── _meta.json               # 元信息（兼容旧版）
 ├── CHANGELOG.md             # 变更记录
-├── 研究空白.md              # 空白识别知识底座（G3 前必读）
+├── 研究空白.md              # 空白识别知识底座（G3 前必读，不是输出目录）
 ├── examples/
-│   ├── example-output.md                 # 导读样例
-│   ├── example-gap-output.md             # 空白样例（耐心资本）
-│   ├── example-output-wangjiaxin.md      # 导读样例（券商 AI × IPO 抑价）
-│   └── example-gap-output-wangjiaxin.md  # 空白样例（同上，含 SciVerse 记录）
+│   ├── example-output.md                 # 统一报告节选（Transformer）
+│   ├── example-gap-output.md             # 空白半部格式（耐心资本）
+│   ├── example-output-wangjiaxin.md      # 完整统一样例（券商 AI × IPO 抑价）
+│   └── example-gap-output-wangjiaxin.md  # 指向上一文件的入口（不再单独成篇）
 ├── scripts/
 │   └── validate_skill.py        # 工程自检脚本（版本/占位符/铁律）
 ├── tests/
@@ -255,13 +241,13 @@ python scripts/validate_skill.py
 不实际提取 PDF，只根据 SKILL.md 说明：如果用户给一个扫描版 PDF，你会怎么处理？输出报告保存在哪里？
 ```
 
-合格表现：回答提示用户 OCR 或手动粘贴文本，输出到 `./文献导读/`。
+合格表现：回答提示用户 OCR 或手动粘贴文本，输出到 `./文献导读/<论文简称>_文献展开.md`。
 
 ```text
-不实际检索，只根据 SKILL.md：用户说「识别这篇论文的研究空白」时，报告顶部必须有什么？七项里能否只写存在的几项？知识底座是哪个文件？
+不实际检索，只根据 SKILL.md：用户说「识别这篇论文的研究空白」时，空白节必须有什么？七项里能否只写存在的几项？知识底座是哪个文件？保存在哪？能否另存第二份？
 ```
 
-合格表现：顶部必须有单篇论文局限性声明；七项全部扫描、不允许跳过；先读 `研究空白.md`；保存到 `./研究空白/`。
+合格表现：空白节须有单篇论文局限性声明；七项全部扫描、不允许跳过；先读 `研究空白.md`；与导读、族谱图写在同一份 `./文献导读/<论文简称>_文献展开.md`；禁止 `./研究空白/`。
 
 ---
 

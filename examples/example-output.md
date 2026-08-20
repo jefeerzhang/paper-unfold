@@ -55,7 +55,7 @@ Vision Transformer (2020)
 
 ## 📚 推荐阅读
 
-- **Attention Is All You Need** 是开创性贡献，后续推荐阅读以下文献（每篇经 SciVerse 学术检索确认 `doc_id`）：
+- **Attention Is All You Need** 是开创性贡献，后续推荐阅读以下文献（示例 `doc_id`，实际运行时以 SciVerse 实时检索结果为准）：
 
 - **[BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805)** — `doc_id: paper:10.48550/arXiv.1810.04805`
   理由：与本文同方法族（Transformer encoder），是双向预训练的开创性工作，用于横向比较架构变体。

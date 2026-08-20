@@ -1,6 +1,6 @@
 {
   "name": "paper-unfold",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "把任意 PDF 论文像折纸一样一层一层展开（直觉层→概念层→技术层→批判层），含知识族谱图、相关推荐、后续检索；SciVerse Token 缺失时主动引导用户配置",
   "author": {
     "name": "jefeer"

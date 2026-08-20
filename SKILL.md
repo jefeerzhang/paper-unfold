@@ -6,8 +6,8 @@ description: |
   按读者背景（科研小白/进阶人员/资深学者）自适应密度。
   学术相关检索走 SciVerse（批评/复现/推荐），WebSearch 作为 fallback。
   SciVerse 需 API Token；无 Token 时必须引导用户配置，不静默降级。
-  内置 PDF 提取，无需外部 CLI。
-version: 2.3.0
+  内置 PDF 提取（可选依赖 poppler / pymupdf，都不装可手动粘贴文本）。
+version: 2.3.1
 license: MIT
 compatibility: Claude Code, Codex, OpenClaw, OpenCode
 allowed-tools: [Read, Write, Edit, Bash, WebSearch, WebFetch, mcp__sciverse__search_papers, mcp__sciverse__semantic_search, mcp__sciverse__list_paper_relations, mcp__sciverse__list_catalog, mcp__sciverse__read_content, mcp__sciverse__get_resource]
@@ -109,7 +109,7 @@ allowed-tools: [Read, Write, Edit, Bash, WebSearch, WebFetch, mcp__sciverse__sea
 > ⚠️ **paper-unfold 需要 SciVerse API Token** 才能做学术相关检索（后续批评/复现 + 推荐阅读）。
 >
 > **获取 Token（2 分钟）：**
-> 1. 打开 SciVerse 开发者控制台：[https://sciverse.ai/dashboard](https://sciverse.ai/dashboard)（或 [https://opendatalab.github.io/Sciverse-Agent-Tools/](https://opendatalab.github.io/Sciverse-Agent-Tools/) 的"5 分钟接入"节）
+> 1. 打开 SciVerse 官方文档：[https://sciverse.space/docs#auth](https://sciverse.space/docs#auth)（鉴权/Token 一节；或 [https://opendatalab.github.io/Sciverse-Agent-Tools/](https://opendatalab.github.io/Sciverse-Agent-Tools/) 的"5 分钟接入"节）
 > 2. 注册/登录账号
 > 3. 在控制台申请 API Token（格式类似 `sci___xxxxxxxx`）
 >

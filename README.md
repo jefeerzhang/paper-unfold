@@ -8,7 +8,7 @@
 
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-paper--unfold-blueviolet)](SKILL.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![skills.sh](https://skills.sh/b/<owner>/paper-unfold)](https://skills.sh/<owner>/paper-unfold)
+[![skills.sh](https://skills.sh/b/jefeerzhang/paper-unfold)](https://skills.sh/jefeerzhang/paper-unfold)
 
 **输入 PDF 或链接，自动展开直觉层→概念层→技术层→批判层的导读报告。**
 
@@ -58,7 +58,7 @@ pip install pymupdf
 
 学术相关检索（后续批评/复现、📚 推荐阅读）依赖 SciVerse MCP。**首次使用 Agent 会主动提示你配置 token**。手动配置步骤：
 
-1. 打开 [SciVerse 开发者控制台](https://sciverse.ai/dashboard) 注册并申请 API Token
+1. 打开 [SciVerse 官方文档](https://sciverse.space/docs#auth)（鉴权/Token 一节）注册并申请 API Token
 2. 编辑项目 `.mcp.json`，在 `mcpServers.sciverse.env.SCIVERSE_API_TOKEN` 填入你的 token：
 
 ```json
@@ -77,12 +77,12 @@ pip install pymupdf
 
 3. 重启 Claude Code / Cursor / Codex
 
-> 没配 token 也能用，但"📚 推荐阅读"和"后续批评/复现"会降级到 WebSearch，质量下降。
+> 没配 token 也能继续，但"📚 推荐阅读"和"后续批评/复现"只能**在你显式同意后**降级到 WebSearch（**禁止静默降级**），质量会下降。首次使用 Agent 会先引导你配置 token。
 
 ### 3. 安装 Skill
 
 ```bash
-npx skills add <owner>/paper-unfold
+npx skills add jefeerzhang/paper-unfold
 ```
 
 装完对 Agent 说：
@@ -136,7 +136,7 @@ npx skills add <owner>/paper-unfold
 - **不会**把 PDF 上传到任何外部服务。
 - **不会**替你改写论文内容或生成未标注的引用。
 - 如果 PDF 加密、扫描质量差或 URL 无法访问，会停下来说明并给出替代方案。
-- 学术相关检索走 SciVerse（推荐/批评/复现）；SciVerse 失败才用 WebSearch fallback。
+- 学术相关检索走 SciVerse（推荐/批评/复现）；SciVerse 失败时才用 WebSearch fallback，且**必须经用户显式同意**，禁止静默降级。
 
 ---
 
@@ -158,9 +158,14 @@ paper-unfold/
 ├── README.md             # 安装与使用说明
 ├── LICENSE               # MIT
 ├── _meta.json            # 元信息（兼容旧版）
+├── CHANGELOG.md          # 变更记录
+├── validate_skill.py     # 工程自检脚本（版本/占位符/铁律）
 ├── examples/
 │   └── example-output.md    # 真实导读报告样例
-└── test-prompts.json     # 测试 prompt 与期望输出
+├── test-prompts.json     # 测试 prompt 与期望输出
+└── .github/
+    └── workflows/
+        └── skill-check.yml  # CI：push/PR 自动跑自检
 ```
 
 ---
@@ -168,6 +173,9 @@ paper-unfold/
 ## 验证与测试
 
 ```bash
+# 工程自检（版本一致性 / 占位符残留 / 铁律完整性 / 必需文件）
+python validate_skill.py
+
 # 干跑测试（不调用真实 PDF 提取）
 # 让 Agent 读取 SKILL.md 和 test-prompts.json，
 # 验证它能否复述四层结构、输出路径和失败处理策略。

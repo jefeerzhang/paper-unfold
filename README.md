@@ -28,7 +28,7 @@
 
 ## 效果示例
 
-👉 [examples/example-output.md](examples/example-output.md)：真实生成的四层导读报告框架。
+👉 [examples/example-output.md](examples/example-output.md)：四层导读报告结构框架与关键内容（节选自真实论文导读）。
 
 ```text
 输入：一篇 PDF 或 arXiv 链接
@@ -102,6 +102,7 @@ npx skills add jefeerzhang/paper-unfold
 - 生成这篇论文的知识族谱图
 - 这篇论文之后有什么批评或复现？
 - 推荐和这篇相关的 3-5 篇文献
+- 首次使用 paper-unfold，帮我展开这篇论文（触发 SciVerse Token 检测与配置引导）
 
 ---
 
@@ -159,10 +160,12 @@ paper-unfold/
 ├── LICENSE               # MIT
 ├── _meta.json            # 元信息（兼容旧版）
 ├── CHANGELOG.md          # 变更记录
-├── validate_skill.py     # 工程自检脚本（版本/占位符/铁律）
 ├── examples/
 │   └── example-output.md    # 真实导读报告样例
-├── test-prompts.json     # 测试 prompt 与期望输出
+├── scripts/
+│   └── validate_skill.py    # 工程自检脚本（版本/占位符/铁律）
+├── tests/
+│   └── test-prompts.json    # 测试 prompt 与期望输出
 └── .github/
     └── workflows/
         └── skill-check.yml  # CI：push/PR 自动跑自检
@@ -174,10 +177,10 @@ paper-unfold/
 
 ```bash
 # 工程自检（版本一致性 / 占位符残留 / 铁律完整性 / 必需文件）
-python validate_skill.py
+python scripts/validate_skill.py
 
 # 干跑测试（不调用真实 PDF 提取）
-# 让 Agent 读取 SKILL.md 和 test-prompts.json，
+# 让 Agent 读取 SKILL.md 和 tests/test-prompts.json，
 # 验证它能否复述四层结构、输出路径和失败处理策略。
 ```
 

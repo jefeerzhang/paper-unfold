@@ -7,14 +7,14 @@
   3. 占位符残留（<owner> / @user / TODO / FIXME 等）
   4. SKILL.md 铁律完整性（铁律 0-7 及 3.5）
   5. SKILL.md frontmatter 必需字段
-  6. test-prompts.json 可解析且非空
+  6. tests/test-prompts.json 可解析且非空
   7. README 安装命令与仓库 owner 一致
   8. 各清单文件中的技能名一致（paper-unfold）
 
-用法:
-  python validate_skill.py                  # 人类可读输出
-  python validate_skill.py --json           # CI 友好 JSON 输出
-  python validate_skill.py --expect-version 2.3.0   # 校验指定版本
+用法（在仓库根目录执行）:
+  python scripts/validate_skill.py                  # 人类可读输出
+  python scripts/validate_skill.py --json           # CI 友好 JSON 输出
+  python scripts/validate_skill.py --expect-version 2.3.0   # 校验指定版本
 
 退出码: 0 = 全部通过；1 = 存在失败项
 """
@@ -24,7 +24,8 @@ import re
 import sys
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
+# 仓库根目录（脚本位于 scripts/ 子目录下）
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 仓库 owner（用于校验 README / _meta.json 安装命令是否已替换占位符）
 OWNER = "jefeerzhang"
@@ -38,7 +39,7 @@ REQUIRED_FILES = [
     "_meta.json",
     ".claude-plugin/marketplace.json",
     "examples/example-output.md",
-    "test-prompts.json",
+    "tests/test-prompts.json",
 ]
 
 # SKILL.md frontmatter 必需字段
@@ -208,20 +209,20 @@ def check_frontmatter() -> tuple[bool, str]:
 
 
 def check_test_prompts() -> tuple[bool, str]:
-    text = read_text("test-prompts.json")
+    text = read_text("tests/test-prompts.json")
     if text is None:
-        return False, "test-prompts.json 不存在"
+        return False, "tests/test-prompts.json 不存在"
     try:
         data = json.loads(text)
     except json.JSONDecodeError as e:
-        return False, f"test-prompts.json 解析失败: {e}"
+        return False, f"tests/test-prompts.json 解析失败: {e}"
     prompts = data.get("test_prompts", [])
     if not isinstance(prompts, list) or not prompts:
-        return False, "test-prompts.json 的 test_prompts 为空或缺失"
+        return False, "tests/test-prompts.json 的 test_prompts 为空或缺失"
     bad = [i for i, t in enumerate(prompts, 1) if not t.get("prompt") or not t.get("expect")]
     if bad:
-        return False, f"test-prompts.json 第 {bad} 项缺少 prompt 或 expect"
-    return True, f"test-prompts.json 有效（{len(prompts)} 组测试）"
+        return False, f"tests/test-prompts.json 第 {bad} 项缺少 prompt 或 expect"
+    return True, f"tests/test-prompts.json 有效（{len(prompts)} 组测试）"
 
 
 def check_install_cmd() -> tuple[bool, str]:

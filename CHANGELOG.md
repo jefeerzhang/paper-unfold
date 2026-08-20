@@ -19,10 +19,12 @@
 - 添加 `研究空白.md` 知识底座文档，整合研究空白的定义、分类框架（Miles 七分法 + Robinson PICOS + Naqvi-Gabr 14 类）、学术演进脉络、识别策略、AI 工具应用、表述方法、常见误区。
 
 ### 变更
-- SKILL.md frontmatter description 补充研究空白触发词（识别研究空白、分析 gap、找研究空白）。
-- README.md 同步更新：标题加「+ 研究空白识别」、触发方式新增空白分析 4 条、交付物表格新增空白模式 6 项、安全边界和负面定义同步扩展。
+- SKILL.md frontmatter description 补充研究空白触发词（识别研究空白、分析 gap、找研究空白）；G3 前强制读取 `研究空白.md`。
+- README.md 同步更新：标题加「+ 研究空白识别」、触发方式新增空白分析 4 条、交付物表格新增空白模式 6 项、安全边界和负面定义同步扩展；补充 SciVerse 工具表、双模式安装后第一句话、效果表示例入口。
 - `_meta.json` description 补充空白模式触发场景与关键词。
 - `.claude-plugin/marketplace.json` description 同步更新。
+- 示例：`examples/example-gap-output.md`（余泳泽等，耐心资本）；`examples/example-output-wangjiaxin.md` 与 `example-gap-output-wangjiaxin.md`（王嘉鑫等，券商 AI × IPO 抑价，含 SciVerse 实跑记录）。
+- 测试契约增至 15 组，覆盖空白模式（七项全扫、综述跳 G3、导读后追加、Token 缺失不静默）。
 
 ## [2.3.2] - 2026-08-20
 

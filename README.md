@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![skills.sh](https://skills.sh/b/jefeerzhang/paper-unfold)](https://skills.sh/jefeerzhang/paper-unfold)
 
-**输入 PDF 或链接，自动展开直觉层→概念层→技术层→批判层的导读报告。**
+**输入 PDF 或链接，展开四层导读；再说「识别研究空白」，得到 Miles 七分法扫描与交叉验证报告。**
 
 [看效果](#效果示例) · [安装](#快速开始) · [触发方式](#触发方式) · [安全边界](#安全边界)
 
@@ -29,9 +29,11 @@
 
 ## 效果示例
 
-- 导读：[examples/example-output.md](examples/example-output.md)（四层结构节选，Attention Is All You Need）
-- 空白：[examples/example-gap-output.md](examples/example-gap-output.md)（Miles 七分法，节选自《耐心资本与企业颠覆性创新》）
-- 导读 + 空白（含 SciVerse 实跑记录）：[examples/example-output-wangjiaxin.md](examples/example-output-wangjiaxin.md) · [examples/example-gap-output-wangjiaxin.md](examples/example-gap-output-wangjiaxin.md)（《“人工智能+”如何赋能券商高质量发展？》）
+| 模式 | 样例 | 说明 |
+|------|------|------|
+| 导读 | [example-output.md](examples/example-output.md) | 四层结构节选（Attention Is All You Need） |
+| 空白 | [example-gap-output.md](examples/example-gap-output.md) | Miles 七分法 + 空白地图（《耐心资本与企业颠覆性创新》） |
+| 导读 + 空白 | [example-output-wangjiaxin.md](examples/example-output-wangjiaxin.md) · [example-gap-output-wangjiaxin.md](examples/example-gap-output-wangjiaxin.md) | 同一篇《管理世界》论文；含 SciVerse 实跑记录（工具、`doc_id`、未入库与接口限制均如实标注） |
 
 ```text
 输入：一篇 PDF 或 arXiv 链接
@@ -65,10 +67,14 @@ pip install pymupdf
 
 ### 2. 配置 SciVerse API Token（强烈推荐）
 
-学术相关检索（后续批评/复现、📚 推荐阅读）依赖 SciVerse MCP。**首次使用 Agent 会主动提示你配置 token**。手动配置步骤：
+学术检索（后续批评/复现、推荐阅读、空白交叉验证）依赖 SciVerse。**首次使用 Agent 会主动检测 `SCIVERSE_API_TOKEN`**。手动配置：
 
-1. 打开 [SciVerse 官方文档](https://sciverse.space/docs#auth)（鉴权/Token 一节）注册并申请 API Token
-2. 编辑项目 `.mcp.json`，在 `mcpServers.sciverse.env.SCIVERSE_API_TOKEN` 填入你的 token：
+1. 打开 [SciVerse 鉴权说明](https://sciverse.space/docs#auth) 申请 API Token（控制台签发，前缀以控制台为准，常见为 `sci___` 或 `sv-`）
+2. 任选其一：导出环境变量，或写入项目 `.mcp.json`：
+
+```bash
+export SCIVERSE_API_TOKEN=你的token
+```
 
 ```json
 {
@@ -77,7 +83,7 @@ pip install pymupdf
       "command": "npx",
       "args": ["-y", "sciverse-mcp-server"],
       "env": {
-        "SCIVERSE_API_TOKEN": "sci___你的token"
+        "SCIVERSE_API_TOKEN": "你的token"
       }
     }
   }
@@ -86,7 +92,7 @@ pip install pymupdf
 
 3. 重启 Claude Code / Cursor / Codex
 
-> 没配 token 也能继续，但"📚 推荐阅读"和"后续批评/复现"只能**在你显式同意后**降级到 WebSearch（**禁止静默降级**），质量会下降。首次使用 Agent 会先引导你配置 token。
+> 没配 token 也能继续，但推荐阅读、后续批评/复现、空白 G4 交叉验证只能**在你显式同意后**降级到 WebSearch（**禁止静默降级**）。报告须标注「⚠️ SciVerse 不可用」。
 
 ### 3. 安装 Skill
 
@@ -94,10 +100,14 @@ pip install pymupdf
 npx skills add jefeerzhang/paper-unfold
 ```
 
-装完对 Agent 说：
+装完对 Agent 说（二选一）：
 
 ```text
 帮我展开这篇论文：https://arxiv.org/pdf/2509.22186
+```
+
+```text
+识别这篇论文的研究空白：<本地 PDF 或链接>
 ```
 
 ---
@@ -132,8 +142,8 @@ npx skills add jefeerzhang/paper-unfold
 |------|------|
 | 四层导读报告 | 直觉层 → 概念层 → 技术层 → 批判层 |
 | 知识族谱图 | 前因 → 本研究 → 后果，标注开创性/渐进式贡献 |
-| 后续检索报告 | SciVerse + WebSearch 验证后续批评、复现、反转 |
-| 推荐阅读 | 3-5 篇高度相关文献（SciVerse `doc_id` 可追溯） |
+| 后续检索报告 | SciVerse 验证后续批评、复现、反转（无 token 须显式同意 fallback） |
+| 推荐阅读 | 3–5 篇相关文献（优先 SciVerse `doc_id` / `unique_id`） |
 | 自测清单 | 基础/进阶/深度三级问题 |
 | 自动保存 | `./文献导读/<论文简称>_文献导读.md` |
 
@@ -144,21 +154,39 @@ npx skills add jefeerzhang/paper-unfold
 | 文献概览 | 核心问题、方法、样本、主要发现 |
 | 七项空白扫描 | Miles 七分法逐项分析，含存在性判断 + 证据 + 置信度 |
 | 空白地图 | 汇总表格，一眼看清哪些空白存在、哪些已被填补 |
-| 交叉验证 | SciVerse 检索同主题文献，验证空白是否真的空白 |
+| 交叉验证 | SciVerse：`semantic_search` + `search_papers` + `list_paper_relations`；未命中如实写「需进一步确认」 |
 | 高价值建议 | 1-3 个最值得跟进的空白方向 + 推荐阅读 |
 | 自动保存 | `./研究空白/<论文简称>_研究空白分析.md` |
 
 ---
 
+## SciVerse 在本项目中做什么
+
+SciVerse 是学术检索后端，不是 PDF 阅读器。Agent 用它给**可追溯**的论文元数据、段落 chunk 和原文切片，避免凭印象编造引用。
+
+| 环节 | 工具 | 用途 |
+|------|------|------|
+| 学字段 | `list_catalog` | 查 DOI/年份等可过滤字段，避免猜参数 |
+| 精确查找 | `search_papers` | 作者、标题、DOI、主题；返回 `unique_id`，有全文时才有 `doc_id` |
+| 语义 RAG | `semantic_search` | 自然语言找相关段落（批评/复现/空白交叉验证） |
+| 扩读原文 | `read_content` | 按 `doc_id` + `offset` 拉字节切片 |
+| 引文网络 | `list_paper_relations` | `CITATIONS` / `REFERENCES`；`total_count=0` 只表示库内关系空，不等于零引用 |
+| 图表 | `get_resource` | `read_content` Markdown 里的图/表 |
+
+无 token、401 或检索无果时：**停下来告知**，不得静默改用网页搜索。中文新刊可能尚未入库（见王嘉鑫样例的 DOI 未命中记录）。
+
+接入说明：[Sciverse 文档](https://sciverse.opendatalab.com/docs) · [Agent Tools 仓库](https://github.com/opendatalab/Sciverse-Agent-Tools)
+
 ## 提取方式
 
 | 方式 | 命令/工具 | 适用场景 |
 |------|-----------|----------|
-| `pdftotext` | poppler 自带 | 文本型 PDF，速度最快 |
+| `pdftotext` | poppler | 文本型 PDF，速度最快 |
 | `pymupdf` | Python 库 | 需要更精细控制时 |
+| `pdfplumber` | Python 库 | 本机未装 poppler/pymupdf 时的常用备选 |
 | 手动粘贴 | 用户直接提供文本 | 扫描件、加密 PDF、提取失败时 |
 
-**建议**：优先用 `pdftotext`；遇到扫描件或复杂排版时换 `pymupdf` 或手动粘贴。
+**建议**：有 `pdftotext` 先用；否则 `pymupdf` / `pdfplumber`；再不行就粘贴文本。不要把 PDF 上传到外部解析服务。
 
 ---
 
@@ -168,7 +196,7 @@ npx skills add jefeerzhang/paper-unfold
 - **不会**把 PDF 上传到任何外部服务。
 - **不会**替你改写论文内容或生成未标注的引用。
 - 如果 PDF 加密、扫描质量差或 URL 无法访问，会停下来说明并给出替代方案。
-- 学术相关检索走 SciVerse（推荐/批评/复现）；SciVerse 失败时才用 WebSearch fallback，且**必须经用户显式同意**，禁止静默降级。
+- 学术相关检索走 SciVerse（推荐/批评/复现/空白交叉验证）；失败时才用 WebSearch fallback，且**必须经用户显式同意**，禁止静默降级。
 
 ---
 
@@ -241,7 +269,9 @@ python scripts/validate_skill.py
 
 - [Poppler](https://poppler.freedesktop.org/)：`pdftotext` 提取工具
 - [PyMuPDF](https://pymupdf.readthedocs.io/)：Python PDF 提取库
+- [Sciverse](https://sciverse.opendatalab.com/docs)：学术检索与可追溯引用
 - 四层渐进阅读法灵感来自 [SQ3R](https://en.wikipedia.org/wiki/SQ3R) (Robinson, 1946) 与费曼学习法
+- 研究空白分类参考 Miles (2017) 七分法、Robinson et al. (2011) PICOS、Müller-Bloch & Kranz (2015)
 - 细节保留原则参考 [FOCUS 工作流](https://doi.org/10.1038/s41587-025-02947-8) (Lin, 2025, *Nature Biotechnology*)
 
 ---

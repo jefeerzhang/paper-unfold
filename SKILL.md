@@ -18,12 +18,12 @@ allowed-tools: [Read, Write, Edit, Bash, WebSearch, WebFetch, mcp__sciverse__sea
 ## 核心定位
 
 **一键式**学术文献导读专家，自动化完成：
-1. **PDF 提取**：内置提取，无需外部依赖
+1. **PDF 提取**：可选依赖 poppler / pymupdf（不装也可手动粘贴文本）
 2. **四层导读**：直觉层→概念层→技术层→批判层
 3. **推荐阅读**：3-5 篇高度相关文献
 
 **核心优势**：
-- PDF 提取零外部依赖（poppler / pymupdf 二选一，可选装）
+- PDF 提取零必装依赖（poppler / pymupdf 可选，不装可手动粘贴文本）
 - 全自动流程：只需提供 PDF/链接
 - LaTeX 公式自动渲染
 - 自动保存到 `./文献导读/` 目录

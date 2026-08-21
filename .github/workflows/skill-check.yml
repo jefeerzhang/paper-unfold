@@ -24,3 +24,6 @@ jobs:
 
       - name: Run validate_skill.py
         run: python scripts/validate_skill.py --json
+
+      - name: Run validate_skill regression tests
+        run: python -m unittest tests.test_validate_skill -v

@@ -7,7 +7,7 @@ description: |
   学术相关检索走 SciVerse（批评/复现/推荐/空白交叉验证），WebSearch 作为 fallback。
   SciVerse 需 API Token；无 Token 时必须引导用户配置，不静默降级。
   内置 PDF 提取（可选依赖 poppler / pymupdf，都不装可手动粘贴文本）。
-version: 2.5.1
+version: 2.5.2
 license: MIT
 compatibility: Claude Code, Codex, OpenClaw, OpenCode
 allowed-tools: [Read, Write, Edit, Bash, WebSearch, WebFetch, mcp__sciverse__search_papers, mcp__sciverse__semantic_search, mcp__sciverse__list_paper_relations, mcp__sciverse__list_catalog, mcp__sciverse__read_content, mcp__sciverse__get_resource]

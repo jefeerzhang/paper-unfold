@@ -16,13 +16,20 @@
   python scripts/validate_skill.py --json           # CI 友好 JSON 输出
   python scripts/validate_skill.py --expect-version 2.3.0   # 校验指定版本
 
+依赖: Python 3.10+，PyYAML（pip install pyyaml）
 退出码: 0 = 全部通过；1 = 存在失败项
 """
 
+import argparse
 import json
 import re
 import sys
 from pathlib import Path
+
+try:
+    import yaml
+except ImportError:  # pragma: no cover
+    sys.exit("缺少依赖 PyYAML，请先执行: pip install pyyaml")
 
 # 仓库根目录（脚本位于 scripts/ 子目录下）
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -94,50 +101,20 @@ def parse_marketplace() -> dict | None:
 
 
 def parse_frontmatter() -> dict:
-    """解析 SKILL.md 的 YAML frontmatter，支持块标量（description: |），返回字段字典。"""
+    """解析 SKILL.md 的 YAML frontmatter（PyYAML），返回值统一转为字符串。"""
     text = read_text("SKILL.md")
-    result: dict[str, str] = {}
     if text is None or not text.startswith("---"):
-        return result
+        return {}
     parts = text.split("---", 2)
     if len(parts) < 3:
-        return result
-    lines = parts[1].splitlines()
-
-    block_key: str | None = None
-    block_lines: list[str] = []
-
-    def flush_block():
-        nonlocal block_key, block_lines
-        if block_key is not None:
-            result[block_key] = "\n".join(block_lines).strip()
-            block_key, block_lines = None, []
-
-    for raw in lines:
-        if block_key is not None:
-            # 块标量的内容行必须缩进；顶格行表示块结束，回退按普通行解析
-            # （不能按"是否含冒号"判断，否则含冒号的内容行会被误判为新键值对）
-            if raw.startswith((" ", "\t")):
-                content = raw.strip()
-                if content:
-                    block_lines.append(content)
-                continue
-            flush_block()
-        line = raw.strip()
-        if not line or line.startswith("#"):
-            continue
-        if ":" in line and not line.startswith(":"):
-            # 普通键值对或块标量起始
-            key, _, value = line.partition(":")
-            key = key.strip()
-            value = value.strip().strip('"').strip("'")
-            if value in ("|", ">"):
-                block_key = key
-                block_lines = []
-            elif key:
-                result[key] = value
-    flush_block()
-    return result
+        return {}
+    try:
+        data = yaml.safe_load(parts[1])
+    except yaml.YAMLError:
+        return {}
+    if not isinstance(data, dict):
+        return {}
+    return {str(k): str(v) for k, v in data.items() if v is not None}
 
 
 def list_scannable_files() -> list[Path]:
@@ -163,19 +140,28 @@ def check_required_files() -> tuple[bool, str]:
     return True, f"必需文件齐全（{len(REQUIRED_FILES)} 个）"
 
 
+def _version_str(value) -> str | None:
+    """版本号归一化为字符串（防止 JSON/YAML 把 2.5 之类解析成数字）。"""
+    if value is None:
+        return None
+    s = str(value).strip()
+    return s or None
+
+
 def check_version_consistency(expect: str | None) -> tuple[bool, str]:
     meta = parse_meta()
     market = parse_marketplace()
     fm = parse_frontmatter()
 
     versions = {
-        "SKILL.md": fm.get("version"),
-        "_meta.json": meta.get("version") if meta else None,
-        "marketplace.json": market.get("version") if market else None,
+        "SKILL.md": _version_str(fm.get("version")),
+        "_meta.json": _version_str(meta.get("version")) if meta else None,
+        "marketplace.json": _version_str(market.get("version")) if market else None,
     }
-    known = {v for v in versions.values() if v}
-    if not known:
-        return False, "无法读取任何版本号（SKILL.md frontmatter 缺失？）"
+    missing = [src for src, v in versions.items() if not v]
+    if missing:
+        return False, f"版本源缺失（任一必需源缺失即失败，不再静默放行）: {', '.join(missing)}"
+    known = set(versions.values())
     if len(known) > 1:
         return False, f"版本不一致: {versions}"
     version = known.pop()
@@ -227,9 +213,10 @@ def check_test_prompts() -> tuple[bool, str]:
     prompts = data.get("test_prompts", [])
     if not isinstance(prompts, list) or not prompts:
         return False, "tests/test-prompts.json 的 test_prompts 为空或缺失"
-    bad = [i for i, t in enumerate(prompts, 1) if not t.get("prompt") or not t.get("expect")]
+    bad = [i for i, t in enumerate(prompts, 1)
+           if not isinstance(t, dict) or not t.get("prompt") or not t.get("expect")]
     if bad:
-        return False, f"tests/test-prompts.json 第 {bad} 项缺少 prompt 或 expect"
+        return False, f"tests/test-prompts.json 第 {', '.join(map(str, bad))} 项缺少 prompt 或 expect"
     return True, f"tests/test-prompts.json 有效（{len(prompts)} 组测试）"
 
 
@@ -295,18 +282,15 @@ def run(expect_version: str | None) -> list[dict]:
 
 
 def main() -> int:
-    args = sys.argv[1:]
-    as_json = "--json" in args
-    expect_version = None
-    if "--expect-version" in args:
-        i = args.index("--expect-version")
-        if i + 1 < len(args):
-            expect_version = args[i + 1]
+    parser = argparse.ArgumentParser(description="paper-unfold 工程自检脚本（CI 可复用）")
+    parser.add_argument("--json", action="store_true", help="CI 友好 JSON 输出")
+    parser.add_argument("--expect-version", metavar="VERSION", help="校验指定版本（缺值时报错）")
+    args = parser.parse_args()
 
-    results = run(expect_version)
+    results = run(args.expect_version)
     passed = sum(1 for r in results if r["ok"])
 
-    if as_json:
+    if args.json:
         print(json.dumps({"ok": passed == len(results), "passed": passed, "total": len(results), "checks": results}, ensure_ascii=False, indent=2))
     else:
         print(f"paper-unfold 自检报告（{passed}/{len(results)} 通过）")

@@ -1,6 +1,6 @@
 {
   "name": "paper-unfold",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "把任意 PDF 论文像折纸一样一层一层展开，输出一份统一报告（四层导读 + 知识族谱图 + Miles 七分法研究空白）；SciVerse 交叉验证；Token 缺失时主动引导配置",
   "author": {
     "name": "jefeer"

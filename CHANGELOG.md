@@ -2,6 +2,16 @@
 
 本项目的所有重要变更都会记录在此文件。格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [2.5.2] - 2026-08-21
+
+### 变更
+- **frontmatter 解析改用 `yaml.safe_load`**：`scripts/validate_skill.py` 新增 PyYAML 依赖（CI 同步安装），废弃 2.5.1 的手写块标量补丁，解析正确性由成熟库保证。
+- **命令行参数改用 argparse**：支持 `--help`；`--expect-version` 缺值时立即报错（原实现静默忽略）。
+
+### 修复
+- **版本一致性检查不再静默放行**：SKILL.md frontmatter / `_meta.json` / `marketplace.json` 任一版本源缺失或不可读时立即失败，并指明缺失来源；版本号统一归一化为字符串比较。
+- 测试契约缺字段提示改为逗号分隔的序号列表（原实现直接输出 Python 列表字面量），并对非字典项做类型防御。
+
 ## [2.5.1] - 2026-08-21
 
 ### 修复

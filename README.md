@@ -227,6 +227,7 @@ paper-unfold/
 
 ```bash
 # 工程自检（版本一致性 / 占位符残留 / 铁律完整性 / 必需文件）
+# 依赖 PyYAML：pip install pyyaml
 python scripts/validate_skill.py
 
 # 干跑测试（不调用真实 PDF 提取）

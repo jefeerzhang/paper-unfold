@@ -12,6 +12,10 @@
 - **版本一致性检查不再静默放行**：SKILL.md frontmatter / `_meta.json` / `marketplace.json` 任一版本源缺失或不可读时立即失败，并指明缺失来源；版本号统一归一化为字符串比较。
 - 测试契约缺字段提示改为逗号分隔的序号列表（原实现直接输出 Python 列表字面量），并对非字典项做类型防御。
 
+### 测试
+- 新增 `tests/test_validate_skill.py` 回归测试套件（13 用例）：固化 H1（块标量含冒号/空行/URL、YAML 列表写法）、M1（版本源缺失即失败、数字版本归一化）、M2（argparse 缺值报错）边界，防止检查器自身回归。
+- CI 新增步骤运行该套件（`python -m unittest tests.test_validate_skill -v`）。
+
 ## [2.5.1] - 2026-08-21
 
 ### 修复

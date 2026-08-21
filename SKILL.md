@@ -7,7 +7,7 @@ description: |
   学术相关检索走 SciVerse（批评/复现/推荐/空白交叉验证），WebSearch 作为 fallback。
   SciVerse 需 API Token；无 Token 时必须引导用户配置，不静默降级。
   内置 PDF 提取（可选依赖 poppler / pymupdf，都不装可手动粘贴文本）。
-version: 2.5.0
+version: 2.5.1
 license: MIT
 compatibility: Claude Code, Codex, OpenClaw, OpenCode
 allowed-tools: [Read, Write, Edit, Bash, WebSearch, WebFetch, mcp__sciverse__search_papers, mcp__sciverse__semantic_search, mcp__sciverse__list_paper_relations, mcp__sciverse__list_catalog, mcp__sciverse__read_content, mcp__sciverse__get_resource]
@@ -37,7 +37,7 @@ allowed-tools: [Read, Write, Edit, Bash, WebSearch, WebFetch, mcp__sciverse__sea
 
 ### 铁律 0：首次使用检查
 - **PDF 提取工具**：检查 `pdftotext`（poppler）或 Python `pymupdf` 是否可用；都不可用 → 提示用户安装
-- **SciVerse Token**：检查 `SCIVERSE_API_TOKEN` 是否设置；未设置 → **必须引导用户配置**（详见"⚙️ SciVerse 配置引导"节）
+- **SciVerse Token**：检查 `.mcp.json` 的 `mcpServers.sciverse.env.SCIVERSE_API_TOKEN` 或系统环境变量 `SCIVERSE_API_TOKEN` 是否已配置；都未配置 → **必须引导用户配置**（详见"⚙️ SciVerse 配置引导"节）
 - URL 输入 → 先下载到临时目录再提取
 
 ### 铁律 1：必须询问读者背景
@@ -55,7 +55,7 @@ allowed-tools: [Read, Write, Edit, Bash, WebSearch, WebFetch, mcp__sciverse__sea
 - 关键断言必须可溯源（`doc_id` 或 URL）
 
 ### 铁律 3.5：SciVerse 鉴权必须引导用户配置（**关键**）
-- 调用任何 `mcp__sciverse__*` 工具前，**必须**主动探测 `SCIVERSE_API_TOKEN` 环境变量
+- 调用任何 `mcp__sciverse__*` 工具前，**必须**主动探测 token（先查 `.mcp.json` 的 sciverse 配置，再查 `SCIVERSE_API_TOKEN` 环境变量）
 - **Token 缺失或返回 401/Authentication failed 时，禁止静默降级到 WebSearch**
 - 必须做以下三件事（顺序不可乱）：
   1. **明确告知用户**：SciVerse 鉴权失败 / Token 未配置，会影响后续批评/复现、推荐阅读、空白交叉验证的质量
@@ -97,12 +97,15 @@ allowed-tools: [Read, Write, Edit, Bash, WebSearch, WebFetch, mcp__sciverse__sea
 
 ### 检测时机
 
-- **时机 A（启动检测，推荐）**：在用户输入论文/链接后、阶段 3 开始前，先用 `Bash` 检查 token：
-  ```bash
-  echo "$SCIVERSE_API_TOKEN"
-  ```
-  - 输出非空 → 正常进入工作流
-  - 输出为空 → 触发引导（下方"配置步骤"）
+- **时机 A（启动检测，推荐）**：在用户输入论文/链接后、阶段 3 开始前，按顺序探测 token：
+  1. 读取项目根目录 `.mcp.json`，检查 `mcpServers.sciverse.env.SCIVERSE_API_TOKEN` 是否已填真实值（非 `sci___你的token` 等占位符）
+  2. `.mcp.json` 不存在或未配置 → 再用 `Bash` 检查系统环境变量：
+     ```bash
+     echo "$SCIVERSE_API_TOKEN"
+     ```
+  - 任一命中 → 正常进入工作流
+  - 都未配置 → 触发引导（下方"配置步骤"）
+  - 注意：`.mcp.json` 里的 `env` 只注入 MCP server 进程，Agent 的 shell 探测不到属正常——所以必须先查文件，不能只看环境变量
 - **时机 B（被动触发）**：直接调 `mcp__sciverse__*`，返回 401/Authentication failed → 触发引导
 - **两种时机都接受**，但时机 A 更友好（用户先看到提示，不会先看到一个失败错误）
 

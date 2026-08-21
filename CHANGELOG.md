@@ -2,6 +2,12 @@
 
 本项目的所有重要变更都会记录在此文件。格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [2.5.1] - 2026-08-21
+
+### 修复
+- **`scripts/validate_skill.py` 待办标记检查失效**：原正则 `\b(TODO|FIXME|XXX)\b(?![\w\x00-\x7f]*[^(字节)])` 的负向前瞻永远失败，任何 TODO/FIXME 都探测不到。简化为 `\b(TODO|FIXME|XXX)\b` 并改为大小写敏感（避免误伤 `paper:xxx` 等模板示例）。
+- **SciVerse token 探测与推荐配置方式矛盾**：检测时机 A 只用 `echo "$SCIVERSE_API_TOKEN"` 探测 shell 环境变量，但推荐配置方式是把 token 写进 `.mcp.json` 的 `env`（仅对 MCP server 进程可见），导致已配置用户被反复误判为未配置。时机 A 改为先读 `.mcp.json` 的 `mcpServers.sciverse.env.SCIVERSE_API_TOKEN`，再查系统环境变量；铁律 0 / 铁律 3.5 / README 同步更新。
+
 ## [2.5.0] - 2026-08-21
 
 ### 变更

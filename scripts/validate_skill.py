@@ -51,13 +51,16 @@ REQUIRED_IRON_LAWS = ["0", "1", "2", "3", "3.5", "4", "5", "6", "7"]
 # 占位符 / 待办残留模式（针对 md/json/yml/yaml 文本文件）
 PLACEHOLDER_PATTERNS = [
     (re.compile(r"<owner>|@user|\bowner/\b", re.IGNORECASE), "占位符 owner/@user"),
-    (re.compile(r"\b(TODO|FIXME|XXX)\b(?![\w\x00-\x7f]*[^(字节)])", re.IGNORECASE), "待办标记 TODO/FIXME/XXX"),
+    (re.compile(r"\b(TODO|FIXME|XXX)\b"), "待办标记 TODO/FIXME/XXX（仅匹配大写，避免误伤模板示例如 paper:xxx）"),
     (re.compile(r"your[_-]?token\b", re.IGNORECASE), "占位符 your-token"),
     (re.compile(r"lorem ipsum", re.IGNORECASE), "占位文本 lorem ipsum"),
 ]
 
-# 跳过扫描的路径
+# 跳过扫描的路径（按目录名）
 SCAN_SKIP = {".git", ".github"}
+
+# 跳过扫描的文件（按文件名）：CHANGELOG 会合法引用 TODO/FIXME 等标记描述历史修复
+SCAN_SKIP_FILES = {"CHANGELOG.md"}
 
 
 def read_text(rel_path: str) -> str | None:
@@ -135,13 +138,15 @@ def parse_frontmatter() -> dict:
 
 
 def list_scannable_files() -> list[Path]:
-    """返回需要扫描占位符的文本文件（md/json/yml/yaml），跳过 .git 与 .github。"""
+    """返回需要扫描占位符的文本文件（md/json/yml/yaml），跳过 .git 与 .github 及豁免文件。"""
     result = []
     for p in BASE_DIR.rglob("*"):
         if not p.is_file():
             continue
         rel = p.relative_to(BASE_DIR)
         if any(part in SCAN_SKIP for part in rel.parts):
+            continue
+        if rel.name in SCAN_SKIP_FILES:
             continue
         if p.suffix.lower() in {".md", ".json", ".yml", ".yaml"}:
             result.append(p)

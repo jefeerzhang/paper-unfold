@@ -65,7 +65,7 @@ pip install pymupdf
 
 ### 2. 配置 SciVerse API Token（强烈推荐）
 
-学术检索（后续批评/复现、推荐阅读、空白交叉验证）依赖 SciVerse。**首次使用 Agent 会主动检测 `SCIVERSE_API_TOKEN`**。手动配置：
+学术检索（后续批评/复现、推荐阅读、空白交叉验证）依赖 SciVerse。**首次使用 Agent 会主动检测配置（先查项目 `.mcp.json`，再查环境变量 `SCIVERSE_API_TOKEN`）**。手动配置：
 
 1. 打开 [SciVerse 鉴权说明](https://sciverse.space/docs#auth) 申请 API Token（控制台签发，前缀以控制台为准，常见为 `sci___` 或 `sv-`）
 2. 任选其一：导出环境变量，或写入项目 `.mcp.json`：

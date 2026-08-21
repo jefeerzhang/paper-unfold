@@ -104,22 +104,30 @@ def parse_frontmatter() -> dict:
         return result
     lines = parts[1].splitlines()
 
+    block_key: str | None = None
+    block_lines: list[str] = []
+
     def flush_block():
         nonlocal block_key, block_lines
         if block_key is not None:
             result[block_key] = "\n".join(block_lines).strip()
             block_key, block_lines = None, []
 
-    block_key: str | None = None
-    block_lines: list[str] = []
     for raw in lines:
+        if block_key is not None:
+            # 块标量的内容行必须缩进；顶格行表示块结束，回退按普通行解析
+            # （不能按"是否含冒号"判断，否则含冒号的内容行会被误判为新键值对）
+            if raw.startswith((" ", "\t")):
+                content = raw.strip()
+                if content:
+                    block_lines.append(content)
+                continue
+            flush_block()
         line = raw.strip()
         if not line or line.startswith("#"):
-            flush_block()
             continue
-        if ":" in line and not line.startswith(":") and not line.endswith(":"):
+        if ":" in line and not line.startswith(":"):
             # 普通键值对或块标量起始
-            flush_block()
             key, _, value = line.partition(":")
             key = key.strip()
             value = value.strip().strip('"').strip("'")
@@ -128,11 +136,6 @@ def parse_frontmatter() -> dict:
                 block_lines = []
             elif key:
                 result[key] = value
-        elif block_key is not None:
-            # 块标量的缩进内容行
-            block_lines.append(line)
-        else:
-            flush_block()
     flush_block()
     return result
 

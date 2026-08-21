@@ -7,7 +7,7 @@
 ### 变更
 - **统一产物**：四层导读、知识族谱图与研究空白写进同一份 `./文献导读/<论文简称>_文献展开.md`；废除 `./研究空白/` 第二份输出。
 - 用户说「展开」或「识别研究空白」只改变篇幅侧重，不改变文件数；导读后追加空白须补进已保存文件。
-- README / SKILL / 测试契约 / 示例同步：王嘉鑫样例合并为完整统一报告；`example-gap-output-wangjiaxin.md` 改为入口指针。
+- README / SKILL / 测试契约 / 示例同步：官方样例改为完整统一报告，不再分拆导读/空白文件。并列两篇：`examples/example-output.md`（王嘉鑫等）与 `examples/example-output-yuyongze.md`（余泳泽等，耐心资本）。
 - SciVerse 工具表补「空白交叉验证」行；`list_paper_relations` 的空结果不得写成零引用。
 
 ## [2.4.0] - 2026-08-20

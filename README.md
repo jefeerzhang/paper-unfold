@@ -31,11 +31,12 @@
 
 默认**一份** Markdown：前半四层导读 + 知识族谱图，后半研究空白。不拆成两个文件。
 
-| 样例 | 说明 |
-|------|------|
-| [example-output.md](examples/example-output.md) | 统一报告节选（Attention Is All You Need：四层 + 族谱图 + 空白结构位） |
-| [example-gap-output.md](examples/example-gap-output.md) | 同一产物的空白半部格式（《耐心资本与企业颠覆性创新》） |
-| [example-output-wangjiaxin.md](examples/example-output-wangjiaxin.md) | 完整统一样例（《管理世界》券商 AI × IPO 抑价；含 SciVerse 实跑：`doc_id`、未入库、接口限制均如实标注） |
+完整样例（同一产物结构，两篇并列）：
+
+- [examples/example-output.md](examples/example-output.md)  
+  王嘉鑫、赵牧（2025，《管理世界》）《“人工智能+”如何赋能券商高质量发展？》——四层导读、知识族谱图、七项空白、空白地图与 SciVerse 实跑记录（`doc_id` / 未入库 / 接口限制均如实标注）写在同一文件。
+- [examples/example-output-yuyongze.md](examples/example-output-yuyongze.md)  
+  余泳泽、胡鹏、朱子政（2025，《中国工业经济》）《耐心资本与企业颠覆性创新——基于企业机构投资者视角》——同一套结构；SciVerse 未命中本文 DOI，相邻文献（Deeg & Hardie、Danneels、外资机构与创新）给出 `doc_id` / `unique_id`。
 
 ```text
 输入：一篇 PDF 或 arXiv 链接（说「展开」或「识别研究空白」均可）
@@ -158,7 +159,7 @@ SciVerse 是学术检索后端，不是 PDF 阅读器。Agent 用它给**可追�
 | 引文网络 | `list_paper_relations` | `CITATIONS` / `REFERENCES`；`total_count=0` 只表示库内关系空，不等于零引用 |
 | 图表 | `get_resource` | `read_content` Markdown 里的图/表 |
 
-无 token、401 或检索无果时：**停下来告知**，不得静默改用网页搜索。中文新刊可能尚未入库（见王嘉鑫样例的 DOI 未命中记录）。
+无 token、401 或检索无果时：**停下来告知**，不得静默改用网页搜索。中文新刊可能尚未入库（见王嘉鑫、余泳泽两份样例的 DOI 未命中记录）。
 
 接入说明：[Sciverse 文档](https://sciverse.opendatalab.com/docs) · [Agent Tools 仓库](https://github.com/opendatalab/Sciverse-Agent-Tools)
 
@@ -209,10 +210,8 @@ paper-unfold/
 ├── CHANGELOG.md             # 变更记录
 ├── 研究空白.md              # 空白识别知识底座（G3 前必读，不是输出目录）
 ├── examples/
-│   ├── example-output.md                 # 统一报告节选（Transformer）
-│   ├── example-gap-output.md             # 空白半部格式（耐心资本）
-│   ├── example-output-wangjiaxin.md      # 完整统一样例（券商 AI × IPO 抑价）
-│   └── example-gap-output-wangjiaxin.md  # 指向上一文件的入口（不再单独成篇）
+│   ├── example-output.md            # 完整样例（王嘉鑫等，券商 AI × IPO 抑价）
+│   └── example-output-yuyongze.md   # 完整样例（余泳泽等，耐心资本 × 颠覆性创新）
 ├── scripts/
 │   └── validate_skill.py        # 工程自检脚本（版本/占位符/铁律）
 ├── tests/

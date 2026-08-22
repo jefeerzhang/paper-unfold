@@ -2,6 +2,12 @@
 
 本项目的所有重要变更都会记录在此文件。格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [Unreleased]
+
+### 变更
+- **refactor**(自检脚本): 元数据单一事实源——`_meta.json` 新增 `owner` 字段，`scripts/validate_skill.py` 改为从 `_meta.json` 推导 OWNER/SKILL_NAME，移除 `OWNER` / `SKILL_NAME` 硬编码常量；`check_install_cmd` 同步校验 `install_cmd_windows`；占位符扫描补充忽略 agent 工作目录 `.workbuddy/`、`.zcode/`、`.claude/`。
+- **refactor**(技能): SciVerse onboarding 与工具速查从 `SKILL.md` 拆出至 `reference/sciverse.md`；SKILL.md 在原位改为单行指针；`README.md` 的 SciVerse 工具表同步精简为指针，避免双份维护。
+
 ## [2.5.2] - 2026-08-21
 
 ### 变更

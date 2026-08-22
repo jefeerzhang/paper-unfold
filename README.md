@@ -148,18 +148,9 @@ npx skills add jefeerzhang/paper-unfold
 
 ## SciVerse 在本项目中做什么
 
-SciVerse 是学术检索后端，不是 PDF 阅读器。Agent 用它给**可追溯**的论文元数据、段落 chunk 和原文切片，避免凭印象编造引用。
+SciVerse 是学术检索后端，不是 PDF 阅读器。Agent 用它给**可追溯**的论文元数据、段落 chunk 和原文切片。
 
-| 环节 | 工具 | 用途 |
-|------|------|------|
-| 学字段 | `list_catalog` | 查 DOI/年份等可过滤字段，避免猜参数 |
-| 精确查找 | `search_papers` | 作者、标题、DOI、主题；返回 `unique_id`，有全文时才有 `doc_id` |
-| 语义 RAG | `semantic_search` | 自然语言找相关段落（批评/复现/空白交叉验证） |
-| 扩读原文 | `read_content` | 按 `doc_id` + `offset` 拉字节切片 |
-| 引文网络 | `list_paper_relations` | `CITATIONS` / `REFERENCES`；`total_count=0` 只表示库内关系空，不等于零引用 |
-| 图表 | `get_resource` | `read_content` Markdown 里的图/表 |
-
-无 token、401 或检索无果时：**停下来告知**，不得静默改用网页搜索。中文新刊可能尚未入库（见王嘉鑫、余泳泽两份样例的 DOI 未命中记录）。
+工具速查（`search_papers` / `semantic_search` / `list_paper_relations` / `list_catalog` / `read_content` / `get_resource`）与配置引导详见 [`reference/sciverse.md`](reference/sciverse.md)。
 
 接入说明：[Sciverse 文档](https://sciverse.opendatalab.com/docs) · [Agent Tools 仓库](https://github.com/opendatalab/Sciverse-Agent-Tools)
 

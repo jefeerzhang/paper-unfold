@@ -6,6 +6,7 @@
   "install_cmd_windows": "npx skills add jefeerzhang/paper-unfold",
   "license": "MIT",
   "version": "2.5.2",
+  "owner": "jefeerzhang",
   "author": "jefeer",
   "created": "2026-03-27",
   "updated": "2026-08-21"

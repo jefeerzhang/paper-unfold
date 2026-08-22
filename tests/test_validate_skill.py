@@ -175,6 +175,85 @@ class VersionConsistencyTests(unittest.TestCase):
         self.assertTrue(ok)
 
 
+class ManifestDrivenChecksTests(unittest.TestCase):
+    """验证 check_install_cmd / check_skill_names 从 _meta.json 推导，
+    不再依赖被移除的 OWNER / SKILL_NAME 模块常量。"""
+
+    def setUp(self):
+        self._orig_meta = vs.parse_meta
+        self._orig_market = vs.parse_marketplace
+        self._orig_read = vs.read_text
+
+    def tearDown(self):
+        vs.parse_meta = self._orig_meta
+        vs.parse_marketplace = self._orig_market
+        vs.read_text = self._orig_read
+
+    def test_manifest_owner_from_field(self):
+        vs.parse_meta = lambda: {
+            "name": "paper-unfold",
+            "owner": "jefeerzhang",
+            "version": "2.5.2",
+            "install_cmd": "npx skills add jefeerzhang/paper-unfold",
+            "install_cmd_windows": "npx skills add jefeerzhang/paper-unfold",
+        }
+        m = vs.manifest()
+        self.assertEqual(m["owner"], "jefeerzhang")
+        self.assertEqual(m["name"], "paper-unfold")
+
+    def test_manifest_owner_falls_back_to_install_cmd(self):
+        """owner 字段缺失时，从 install_cmd 反推（兜底）。"""
+        vs.parse_meta = lambda: {
+            "name": "demo-skill",
+            "version": "1.0.0",
+            "install_cmd": "npx skills add someone/demo-skill",
+        }
+        m = vs.manifest()
+        self.assertEqual(m["owner"], "someone")
+
+    def test_check_install_cmd_uses_manifest_owner(self):
+        """重命名 owner 时，旧常量若残留会与 manifest 不一致；这里验证完全无常量。"""
+        vs.parse_meta = lambda: {
+            "name": "paper-unfold",
+            "owner": "jefeerzhang",
+            "version": "2.5.2",
+            "install_cmd": "npx skills add jefeerzhang/paper-unfold",
+            "install_cmd_windows": "npx skills add jefeerzhang/paper-unfold",
+        }
+        vs.parse_marketplace = lambda: {"name": "paper-unfold", "version": "2.5.2"}
+        vs.read_text = lambda rel: ("# paper-unfold\nnpx skills add jefeerzhang/paper-unfold\n") if rel == "README.md" else None
+        ok, msg = vs.check_install_cmd()
+        self.assertTrue(ok, msg=msg)
+
+    def test_check_install_cmd_flags_windows_mismatch(self):
+        """install_cmd_windows 与 install_cmd 不一致时必须报错。"""
+        vs.parse_meta = lambda: {
+            "name": "paper-unfold",
+            "owner": "jefeerzhang",
+            "version": "2.5.2",
+            "install_cmd": "npx skills add jefeerzhang/paper-unfold",
+            "install_cmd_windows": "npx skills add wrong-owner/paper-unfold",
+        }
+        vs.parse_marketplace = lambda: {"name": "paper-unfold", "version": "2.5.2"}
+        vs.read_text = lambda rel: "npx skills add jefeerzhang/paper-unfold\n" if rel == "README.md" else None
+        ok, msg = vs.check_install_cmd()
+        self.assertFalse(ok)
+        self.assertIn("install_cmd_windows", msg)
+
+    def test_check_skill_names_uses_manifest_name(self):
+        vs.parse_meta = lambda: {"name": "paper-unfold", "version": "2.5.2"}
+        vs.parse_marketplace = lambda: {
+            "name": "paper-unfold",
+            "version": "2.5.2",
+            "skills": [{"name": "paper-unfold"}],
+        }
+        vs.read_text = lambda rel: (
+            "---\nname: paper-unfold\nversion: 2.5.2\nlicense: MIT\n---\n"
+        ) if rel == "SKILL.md" else None
+        ok, msg = vs.check_skill_names()
+        self.assertTrue(ok, msg=msg)
+
+
 class CliArgTests(unittest.TestCase):
     def test_expect_version_missing_value_errors(self):
         """M2：--expect-version 缺值 -> argparse 报错（returncode != 0）。"""

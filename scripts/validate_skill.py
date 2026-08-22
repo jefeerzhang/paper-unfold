@@ -34,9 +34,38 @@ except ImportError:  # pragma: no cover
 # 仓库根目录（脚本位于 scripts/ 子目录下）
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 仓库 owner（用于校验 README / _meta.json 安装命令是否已替换占位符）
-OWNER = "jefeerzhang"
-SKILL_NAME = "paper-unfold"
+
+def _infer_owner_from_install_cmd(install_cmd: str) -> str | None:
+    """从 `npx skills add <owner>/<name>` 中反推 owner（兜底用）。"""
+    if not install_cmd:
+        return None
+    parts = install_cmd.strip().split()
+    if len(parts) < 4 or parts[0] != "npx" or parts[1] != "skills" or parts[2] != "add":
+        return None
+    last = parts[3]
+    if "/" not in last:
+        return None
+    return last.split("/", 1)[0]
+
+
+def manifest() -> dict:
+    """从 _meta.json 推导元数据单一事实源：name / version / owner / install_cmd。
+
+    owner 优先读 _meta.json.owner 字段；缺失时从 install_cmd 反推（兜底）。
+    install_cmd 同时返回 install_cmd 与 install_cmd_windows 中实际存在且非空的那条。
+    """
+    meta = parse_meta() or {}
+    name = meta.get("name")
+    version = _version_str(meta.get("version"))
+    owner = meta.get("owner") or _infer_owner_from_install_cmd(meta.get("install_cmd", ""))
+    install_cmd = meta.get("install_cmd") or ""
+    return {
+        "name": name,
+        "version": version,
+        "owner": owner,
+        "install_cmd": install_cmd,
+        "install_cmd_windows": meta.get("install_cmd_windows", ""),
+    }
 
 # 必需文件
 REQUIRED_FILES = [
@@ -64,7 +93,7 @@ PLACEHOLDER_PATTERNS = [
 ]
 
 # 跳过扫描的路径（按目录名）
-SCAN_SKIP = {".git", ".github"}
+SCAN_SKIP = {".git", ".github", ".workbuddy", ".zcode", ".claude"}
 
 # 跳过扫描的文件（按文件名）：CHANGELOG 会合法引用 TODO/FIXME 等标记描述历史修复
 SCAN_SKIP_FILES = {"CHANGELOG.md"}
@@ -221,23 +250,31 @@ def check_test_prompts() -> tuple[bool, str]:
 
 
 def check_install_cmd() -> tuple[bool, str]:
-    meta = parse_meta()
+    m = manifest()
+    owner = m["owner"]
+    name = m["name"]
+    if not owner or not name:
+        return False, "缺少元数据（_meta.json 缺 owner 或 name）"
+    expected = f"npx skills add {owner}/{name}"
     readme = read_text("README.md") or ""
-    install_cmd = meta.get("install_cmd", "") if meta else ""
-    expected = f"npx skills add {OWNER}/{SKILL_NAME}"
     problems = []
-    if install_cmd != expected:
-        problems.append(f"_meta.json install_cmd = {install_cmd!r}")
+    if m["install_cmd"] != expected:
+        problems.append(f"_meta.json install_cmd = {m['install_cmd']!r}")
+    if m["install_cmd_windows"] and m["install_cmd_windows"] != expected:
+        problems.append(f"_meta.json install_cmd_windows = {m['install_cmd_windows']!r}")
     if expected not in readme:
         problems.append("README.md 缺少正确安装命令")
-    if f"<{OWNER}>" in readme or "<owner>" in readme:
+    if f"<{owner}>" in readme or "<owner>" in readme:
         problems.append("README.md 仍有 <owner> 占位")
     if problems:
         return False, "; ".join(problems)
-    return True, f"安装命令一致（npx skills add {OWNER}/{SKILL_NAME}）"
+    return True, f"安装命令一致（npx skills add {owner}/{name}）"
 
 
 def check_skill_names() -> tuple[bool, str]:
+    name = manifest()["name"]
+    if not name:
+        return False, "缺少元数据（_meta.json 缺 name）"
     fm = parse_frontmatter()
     meta = parse_meta()
     market = parse_marketplace()
@@ -252,10 +289,10 @@ def check_skill_names() -> tuple[bool, str]:
         if isinstance(skills, list) and skills:
             market_skill = skills[0].get("name")
     names["marketplace.json skills[0]"] = market_skill
-    bad = [f"{k}={v!r}" for k, v in names.items() if v != SKILL_NAME]
+    bad = [f"{k}={v!r}" for k, v in names.items() if v != name]
     if bad:
         return False, "技能名不一致: " + ", ".join(bad)
-    return True, f"技能名一致（{SKILL_NAME}）"
+    return True, f"技能名一致（{name}）"
 
 
 CHECKS = [

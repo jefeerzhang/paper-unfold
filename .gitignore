@@ -24,3 +24,11 @@ Thumbs.db
 # 临时文件
 *.log
 *.tmp
+
+# 研究空白配图（本地作图素材，不入库）
+images/
+研究空白配图/
+scripts/article-illustrator-cover-only.js
+
+# 依赖缓存
+.pnpm-store/
